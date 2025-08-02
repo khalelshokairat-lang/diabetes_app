@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diabetes Prediction</title>
+</head>
+<body>
+    <h2>Enter Patient Information</h2>
+    <form action="/predict" method="post">
+        <label>Gender (0 or 1):</label><br>
+        <input type="number" name="gender" step="any" required><br><br>
+
+        <label>Age:</label><br>
+        <input type="number" name="age" step="any" required><br><br>
+
+        <label>Hypertension (0 or 1):</label><br>
+        <input type="number" name="hypertension" step="any" required><br><br>
+
+        <label>Heart Disease (0 or 1):</label><br>
+        <input type="number" name="heart_disease" step="any" required><br><br>
+
+        <label>Smoking History (number):</label><br>
+        <input type="number" name="smoking_history" step="any" required><br><br>
+
+        <label>BMI:</label><br>
+        <input type="number" name="bmi" step="any" required><br><br>
+
+        <label>HbA1c Level:</label><br>
+        <input type="number" name="HbA1c_level" step="any" required><br><br>
+
+        <label>Blood Glucose Level:</label><br>
+        <input type="number" name="blood_glucose_level" step="any" required><br><br>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    {% if majority %}
+        <h3>Majority Vote Result: {{ majority }}</h3>
+        <ul>
+            {% for model, result in predictions.items() %}
+                <li>{{ model }}: {{ result }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

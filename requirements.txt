@@ -6,5 +6,6 @@ pandas
 joblib
 python-multipart
 gunicorn
+scikit-learn
 
 

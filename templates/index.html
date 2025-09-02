@@ -1,46 +1,195 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
 <head>
-    <title>Diabetes Prediction</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diabetes Prediction • توقع مرض السكري</title>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --card:#0b1224;        /* deep card */
+      --muted:#64748b;       /* slate-500 */
+      --text:#e2e8f0;        /* slate-200 */
+      --accent:#22d3ee;      /* cyan-400 */
+      --accent2:#a78bfa;     /* violet-400 */
+      --ok:#10b981;          /* emerald-500 */
+      --bad:#ef4444;         /* red-500 */
+      --warn:#f59e0b;        /* amber-500 */
+      --chip:#1f2937;        /* slate-800 */
+      --input:#0f1a36;
+      --border:#1f2a44;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(135deg,#0b1022,#121b36);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans",sans-serif;}
+    a{color:var(--accent)}
+    .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .title{display:flex;gap:12px;align-items:center}
+    .title .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#001b2a;font-weight:900}
+    h1{margin:0;font-size:clamp(22px,3.2vw,32px);letter-spacing:.2px}
+    .subtitle{color:var(--muted);margin-top:6px;font-size:14px}
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid var(--border);border-radius:16px;padding:18px 18px 14px;box-shadow:0 10px 28px rgba(0,0,0,.25)}
+    .card h2{margin:2px 0 12px;font-size:18px}
+    .hint{font-size:12.5px;color:var(--muted);margin-top:-6px;margin-bottom:14px}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    @media (max-width:640px){.form-grid{grid-template-columns:1fr}}
+    label{font-weight:600;font-size:13.5px;margin-bottom:6px;display:block}
+    input,select{width:100%;border-radius:12px;padding:11px 12px;background:var(--input);border:1px solid var(--border);color:var(--text);outline:none}
+    input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+    .note{font-size:11.5px;color:var(--muted);margin-top:6px}
+    .row{display:flex;gap:10px;align-items:center}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .chip{background:var(--chip);border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:12px;color:#cbd5e1}
+    .submit{display:flex;gap:12px;align-items:center;margin-top:14px}
+    button{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#001b2a;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .kbd{border:1px solid var(--border);background:var(--chip);padding:2px 6px;border-radius:6px;font-size:12px}
+    /* results */
+    .pred{display:grid;gap:12px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;font-weight:700;font-size:13px;border:1px solid var(--border)}
+    .ok{background:rgba(16,185,129,.12);color:#bbf7d0}
+    .bad{background:rgba(239,68,68,.12);color:#fecaca}
+    .tbl{width:100%;border-collapse:collapse;margin-top:6px}
+    .tbl th,.tbl td{padding:10px;border-bottom:1px dashed var(--border);text-align:left;font-size:13.5px}
+    .tbl th{color:#cbd5e1;font-weight:700}
+    footer{margin:22px 0 8px;color:var(--muted);font-size:12.5px;text-align:center}
+    .dual{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12.5px}
+    .tip{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);padding:10px 12px;border-radius:12px;margin-top:10px;font-size:12.5px}
+  </style>
 </head>
 <body>
-    <h2>Enter Patient Information</h2>
-    <form action="/predict" method="post">
-        <label>Gender (0 or 1):</label><br>
-        <input type="number" name="gender" step="any" required><br><br>
+  <div class="wrap">
+    <div class="header">
+      <div class="title">
+        <div class="logo">AI</div>
+        <div>
+          <h1>Diabetes Prediction • توقع مرض السكري</h1>
+          <div class="subtitle">Enter patient features below • أدخل الخصائص أدناه</div>
+        </div>
+      </div>
+    </div>
 
-        <label>Age:</label><br>
-        <input type="number" name="age" step="any" required><br><br>
+    <div class="grid">
+      <!-- Form Card -->
+      <div class="card">
+        <h2>Input • الإدخال</h2>
+        <div class="hint">Numeric codes explained under each field • شرح الأرقام تحت كل حقل</div>
 
-        <label>Hypertension (0 or 1):</label><br>
-        <input type="number" name="hypertension" step="any" required><br><br>
+        <form method="post" action="/predict" id="pred-form">
+          <div class="form-grid">
 
-        <label>Heart Disease (0 or 1):</label><br>
-        <input type="number" name="heart_disease" step="any" required><br><br>
+            <div>
+              <label for="gender">Gender • الجنس</label>
+              <select id="gender" name="gender" required>
+                <option value="0">0 — Female (أنثى)</option>
+                <option value="1">1 — Male (ذكر)</option>
+                <option value="2">2 — Other (آخر)</option>
+              </select>
+              <div class="note">Use the numeric code • استخدم الرمز الرقمي</div>
+            </div>
 
-        <label>Smoking History (number):</label><br>
-        <input type="number" name="smoking_history" step="any" required><br><br>
+            <div>
+              <label for="age">Age • العمر</label>
+              <input id="age" name="age" type="number" min="0" max="120" step="1" placeholder="e.g., 45" required>
+              <div class="note">Whole number only (0–120) • عدد صحيح فقط</div>
+            </div>
 
-        <label>BMI:</label><br>
-        <input type="number" name="bmi" step="any" required><br><br>
+            <div>
+              <label for="hypertension">Hypertension • ارتفاع ضغط الدم</label>
+              <select id="hypertension" name="hypertension" required>
+                <option value="0">0 — No (لا)</option>
+                <option value="1">1 — Yes (نعم)</option>
+              </select>
+              <div class="note">0 = No • 1 = Yes</div>
+            </div>
 
-        <label>HbA1c Level:</label><br>
-        <input type="number" name="HbA1c_level" step="any" required><br><br>
+            <div>
+              <label for="heart_disease">Heart Disease • أمراض القلب</label>
+              <select id="heart_disease" name="heart_disease" required>
+                <option value="0">0 — No (لا)</option>
+                <option value="1">1 — Yes (نعم)</option>
+              </select>
+              <div class="note">0 = No • 1 = Yes</div>
+            </div>
 
-        <label>Blood Glucose Level:</label><br>
-        <input type="number" name="blood_glucose_level" step="any" required><br><br>
+            <div>
+              <label for="smoking_history">Smoking History • تاريخ التدخين</label>
+              <select id="smoking_history" name="smoking_history" required>
+                <option value="0">0 — Never (لم يدخن أبدًا)</option>
+                <option value="1">1 — Current (مدخن حاليًا)</option>
+                <option value="2">2 — Former (توقف عن التدخين)</option>
+                <option value="3">3 — No Info (لا توجد معلومات)</option>
+                <option value="4">4 — Ever (دخن في أي وقت)</option>
+                <option value="5">5 — Not current (ليس مدخنًا الآن)</option>
+              </select>
+              <div class="note">Ensure codes match training • تأكد من تطابق الترميز مع التدريب</div>
+            </div>
 
-        <input type="submit" value="Predict">
-    </form>
+            <div>
+              <label for="bmi">BMI • مؤشر كتلة الجسم</label>
+              <input id="bmi" name="bmi" type="number" min="10" max="60" step="0.1" placeholder="e.g., 27.4" required>
+              <div class="note">Decimals allowed • أرقام عشرية مسموحة</div>
+            </div>
 
-    {% if majority %}
-        <h3>Majority Vote Result: {{ majority }}</h3>
-        <ul>
-            {% for model, result in predictions.items() %}
-                <li>{{ model }}: {{ result }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+            <div>
+              <label for="HbA1c_level">HbA1c Level (%) • مستوى HbA1c</label>
+              <input id="HbA1c_level" name="HbA1c_level" type="number" min="3" max="20" step="0.1" placeholder="e.g., 6.5" required>
+              <div class="note">Decimals allowed • أرقام عشرية مسموحة</div>
+            </div>
+
+            <div>
+              <label for="blood_glucose_level">Blood Glucose (mg/dL) • جلوكوز الدم</label>
+              <input id="blood_glucose_level" name="blood_glucose_level" type="number" min="40" max="500" step="0.1" placeholder="e.g., 130" required>
+              <div class="note">Decimals allowed • أرقام عشرية مسموحة</div>
+            </div>
+
+          </div>
+
+          <div class="submit">
+            <button type="submit" title="Run prediction • تنفيذ التنبؤ">Predict • توقّع</button>
+            <span class="kbd" title="Required fields • حقول مطلوبة">* required</span>
+          </div>
+
+          <div class="tip">
+            <strong>Tip • ملاحظة:</strong> Keep inputs realistic (e.g., BMI 10–60). If you used a different smoking mapping during training, update the dropdown codes to match.
+            <br>أدخل قيماً منطقية. إذا استُخدم ترميز مختلف للتدخين أثناء التدريب فحدّث القيم هنا.
+          </div>
+        </form>
+      </div>
+
+      <!-- Results Card -->
+      <div class="card">
+        <h2>Results • النتائج</h2>
+        {% if predictions %}
+          <div class="pred">
+            <div class="badge {% if 'Diabetes' in majority %}bad{% else %}ok{% endif %}">
+              {% if 'Diabetes' in majority %} Final Decision: {{ majority }} {% else %} Final Decision: {{ majority }} {% endif %}
+            </div>
+            <table class="tbl">
+              <thead>
+                <tr><th>Model • النموذج</th><th>Prediction • التنبؤ</th></tr>
+              </thead>
+              <tbody>
+                {% for model, result in predictions.items() %}
+                  <tr><td>{{ model }}</td><td>{{ result }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="hint">Submit the form to see predictions • أرسل النموذج لعرض النتائج</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <footer>
+      <div class="dual">
+        <span>On‑device ML pipelines with FastAPI • خطوط ML مع FastAPI</span>
+        <span>Education use only • للاستخدام التعليمي</span>
+      </div>
+    </footer>
+  </div>
 </body>
 </html>
